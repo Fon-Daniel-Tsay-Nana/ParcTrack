@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 440" role="img" aria-labelledby="t">
+  <title id="t">Cargo ship carrying containers across the ocean, with a plane and a delivery route</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EFF6FF"/>
+      <stop offset="1" stop-color="#D6E4FF"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#155EEF"/>
+      <stop offset="1" stop-color="#102A56"/>
+    </linearGradient>
+    <clipPath id="frame"><rect width="560" height="440" rx="28"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <rect width="560" height="440" fill="url(#sky)"/>
+
+    <!-- sun / globe arcs -->
+    <circle cx="420" cy="120" r="70" fill="#FFFFFF" opacity="0.9"/>
+    <path d="M350 120 a70 70 0 0 0 140 0 M420 50 v140 M362 85 h116 M362 155 h116" fill="none" stroke="#D6E4FF" stroke-width="3"/>
+    <ellipse cx="420" cy="120" rx="32" ry="70" fill="none" stroke="#D6E4FF" stroke-width="3"/>
+
+    <!-- dashed route with pin -->
+    <path d="M60 170 C 150 70, 260 70, 330 120" fill="none" stroke="#155EEF" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="round"/>
+    <circle cx="60" cy="170" r="7" fill="#155EEF"/>
+    <g transform="translate(330 78)">
+      <path d="M0 42 C -18 20, -18 0, 0 0 C 18 0, 18 20, 0 42 Z" fill="#102A56" transform="translate(0 -4) scale(1.1)"/>
+      <circle cx="0" cy="14" r="7" fill="#FFFFFF"/>
+    </g>
+
+    <!-- plane -->
+    <g transform="translate(150 72) rotate(-12)" fill="#102A56">
+      <path d="M0 10 L60 6 Q72 6 72 12 Q72 18 60 18 L0 14 Z"/>
+      <path d="M28 8 L42 -14 L50 -14 L44 8 Z"/>
+      <path d="M28 16 L42 38 L50 38 L44 16 Z"/>
+      <path d="M2 10 L-4 -2 L4 -2 L12 9 Z"/>
+    </g>
+
+    <!-- sea -->
+    <rect y="318" width="560" height="122" fill="url(#sea)"/>
+
+    <!-- containers -->
+    <g stroke="#FFFFFF" stroke-width="2">
+      <rect x="120" y="258" width="58" height="34" fill="#155EEF"/>
+      <rect x="178" y="258" width="58" height="34" fill="#102A56"/>
+      <rect x="236" y="258" width="58" height="34" fill="#5B8DEF"/>
+      <rect x="294" y="258" width="58" height="34" fill="#155EEF"/>
+      <rect x="149" y="224" width="58" height="34" fill="#9DBBF9"/>
+      <rect x="207" y="224" width="58" height="34" fill="#155EEF"/>
+      <rect x="265" y="224" width="58" height="34" fill="#102A56"/>
+    </g>
+    <g stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="2">
+      <path d="M134 262 v26 M148 262 v26 M162 262 v26 M192 262 v26 M206 262 v26 M220 262 v26 M250 262 v26 M264 262 v26 M278 262 v26 M308 262 v26 M322 262 v26 M336 262 v26"/>
+      <path d="M163 228 v26 M177 228 v26 M191 228 v26 M221 228 v26 M235 228 v26 M249 228 v26 M279 228 v26 M293 228 v26 M307 228 v26"/>
+    </g>
+
+    <!-- bridge -->
+    <rect x="370" y="214" width="56" height="78" rx="4" fill="#FFFFFF"/>
+    <rect x="378" y="224" width="40" height="12" rx="2" fill="#102A56"/>
+    <rect x="378" y="244" width="40" height="8" rx="2" fill="#D6E4FF"/>
+    <rect x="392" y="196" width="10" height="18" fill="#102A56"/>
+
+    <!-- hull -->
+    <path d="M70 292 H500 L462 344 H112 Z" fill="#102A56"/>
+    <path d="M70 292 H500 L494 300 H76 Z" fill="#155EEF"/>
+    <text x="150" y="327" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" letter-spacing="3">PARCTRACK</text>
+
+    <!-- waves -->
+    <path d="M0 352 q20 -10 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="3"/>
+    <path d="M-20 384 q20 -10 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="3"/>
+  </g>
+</svg>

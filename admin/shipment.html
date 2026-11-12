@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shipment | ParcTrack Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/map.css">
+  <link rel="stylesheet" href="/admin/assets/css/admin.css">
+</head>
+<body class="admin">
+  <div class="app" id="app">
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <a href="/admin/dashboard" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3.6c.3-1.5 1.4-2.3 2.6-2.1" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><circle cx="16.5" cy="7.5" r="4.3" fill="#fff"/><path d="M20.3 6.2 23.4 7.6 20.3 9z" fill="#FDB022"/><circle cx="17.7" cy="6.6" r="1" fill="#102A56"/><rect x="1.8" y="9.5" width="16" height="11" rx="1.6" fill="#155EEF" stroke="#fff" stroke-width="1.8"/><path d="M2.4 10.3 9.8 15.6 17.2 10.3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span>ParcTrack Admin</span>
+      </a>
+      <nav class="side-nav">
+        <div class="side-label">Menu</div>
+        <a href="/admin/dashboard" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a href="/admin/dashboard#new">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          New Shipment
+        </a>
+        <a href="/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+          View Website
+        </a>
+      </nav>
+      <div class="side-nav sidebar-foot">
+        <button type="button" id="logoutBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Log out
+        </button>
+      </div>
+    </aside>
+    <div class="nav-scrim" id="navScrim"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+          <a href="/admin/dashboard" class="back-link" aria-label="Back to dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </a>
+          <h1>Shipment <span class="mono" id="codeHint"></span></h1>
+          <span class="status" id="statusBadge"></span>
+        </div>
+        <div class="topbar-right">
+          <div class="admin-chip">
+            <span class="avatar" id="avatar" aria-hidden="true">A</span>
+            <span class="who" id="adminEmail"></span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="panel state-panel" id="stateLoading"><p class="muted">Loading shipment…</p></div>
+        <div class="panel state-panel" id="stateError" hidden>
+          <h2 id="errorTitle">Shipment not found</h2>
+          <p class="muted" id="errorText">This shipment does not exist or was removed.</p>
+          <a class="btn" href="/admin/dashboard">Back to dashboard</a>
+        </div>
+
+        <div id="stateReady" hidden>
+          <div class="notice notice-warn" id="pausedNotice" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M10 9v6M14 9v6"/></svg>
+            <div><strong>The parcel is stopped.</strong> Customers see a "tracking paused" notice. Press <strong>Resume</strong> and it continues, still arriving at the estimated delivery time.</div>
+          </div>
+
+          <div class="ship-grid">
+            <!-- ===== Map / location ===== -->
+            <section class="panel map-panel" aria-labelledby="mapTitle">
+              <div class="panel-head">
+                <h2 id="mapTitle">Live route</h2>
+                <div class="seg" role="radiogroup" aria-label="Change the route">
+                  <button type="button" role="radio" aria-checked="false" data-mode="origin">Set origin</button>
+                  <button type="button" role="radio" aria-checked="false" data-mode="destination">Set destination</button>
+                </div>
+              </div>
+              <div class="map-tools">
+                <p class="muted map-hint" id="mapHint">The parcel moves along the road on its own and arrives at the estimated delivery time.</p>
+                <form class="place-search" id="placeSearch" hidden>
+                  <label class="sr-only" for="placeInput">Find a place</label>
+                  <input class="input" id="placeInput" type="search" placeholder="Find a place, e.g. Dallas" autocomplete="off">
+                  <button class="btn btn-outline btn-sm" type="submit">Find</button>
+                </form>
+              </div>
+              <div id="map" class="admin-map" role="region" aria-label="Shipment map"></div>
+
+              <!-- Pending change -->
+              <form class="pending" id="pendingForm" hidden>
+                <div class="pending-head">
+                  <strong id="pendingTitle">New origin</strong>
+                  <span class="muted mono" id="pendingCoords"></span>
+                </div>
+                <div class="field">
+                  <label for="pendingName">Place name <span class="muted">(shown to customers)</span></label>
+                  <input class="input" id="pendingName" maxlength="200" required>
+                </div>
+                <p class="muted small">Saving a new origin or destination resets the journey. Press <strong>Start journey</strong> afterwards.</p>
+                <div class="pending-actions">
+                  <button class="btn btn-outline btn-sm" type="button" id="pendingCancel">Cancel</button>
+                  <button class="btn btn-sm" type="submit" id="pendingSave">Save</button>
+                </div>
+              </form>
+
+              <dl class="loc-summary">
+                <div><dt>Current location</dt><dd id="sumCurrent"></dd></div>
+                <div><dt>Last updated</dt><dd id="sumUpdated"></dd></div>
+                <div><dt>Origin</dt><dd id="sumOrigin"></dd></div>
+                <div><dt>Destination</dt><dd id="sumDestination"></dd></div>
+              </dl>
+            </section>
+
+            <!-- ===== Controls ===== -->
+            <div class="side-stack">
+              <section class="panel pad" aria-labelledby="trackTitle">
+                <h2 id="trackTitle">Journey</h2>
+                <p class="track-state" id="trackState"></p>
+                <div class="progress" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><span id="progressFill"></span></div>
+                <p class="progress-text" id="progressText"></p>
+                <button class="btn btn-block" type="button" id="startBtn" hidden>Start journey</button>
+                <div id="pauseControls">
+                  <div class="field">
+                    <label for="pauseMessage">Message to customers when stopped <span class="muted">(optional)</span></label>
+                    <textarea class="input" id="pauseMessage" rows="2" maxlength="300" placeholder="e.g. Delayed by weather. Moving again tomorrow."></textarea>
+                  </div>
+                  <button class="btn btn-block" type="button" id="pauseBtn">Stop parcel</button>
+                </div>
+              </section>
+
+              <section class="panel pad" aria-labelledby="statusTitle">
+                <h2 id="statusTitle">Status</h2>
+                <form id="statusForm">
+                  <div class="field">
+                    <label for="statusSelect">Shipment status</label>
+                    <select id="statusSelect"></select>
+                  </div>
+                  <div class="field">
+                    <label for="statusNote">Internal note <span class="muted">(optional)</span></label>
+                    <input class="input" id="statusNote" maxlength="300">
+                  </div>
+                  <button class="btn btn-block" type="submit" id="statusBtn">Update status</button>
+                </form>
+              </section>
+
+              <section class="panel pad" aria-labelledby="etaTitle">
+                <h2 id="etaTitle">Estimated delivery</h2>
+                <p class="muted small">The parcel always arrives at this time. Changing it speeds up or slows down the rest of the trip.</p>
+                <form id="etaForm" class="inline-form">
+                  <label class="sr-only" for="etaInput">Estimated delivery date and time</label>
+                  <input class="input" id="etaInput" type="datetime-local" required>
+                  <button class="btn btn-outline btn-sm" type="submit">Save</button>
+                </form>
+              </section>
+
+              <section class="panel pad" aria-labelledby="codeTitle">
+                <h2 id="codeTitle">Tracking code</h2>
+                <p class="muted small">Only the last 4 characters are stored for display. If the customer's code is lost, issue a new one. The old code stops working.</p>
+                <div class="code-row"><span class="mono code-hint" id="codeHint2"></span>
+                  <button class="btn btn-outline btn-sm" type="button" id="reissueBtn">Issue new code</button></div>
+                <div class="code-box" id="newCodeBox" hidden>
+                  <span class="mono" id="newCode"></span>
+                  <button class="btn btn-sm" type="button" id="copyBtn">Copy</button>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <div class="ship-grid lower">
+            <section class="panel pad" aria-labelledby="detailsTitle">
+              <h2 id="detailsTitle">Shipment details</h2>
+              <div class="detail-cols">
+                <dl class="detail-list">
+                  <dt>Sender</dt><dd id="dSender"></dd>
+                  <dt>Sender location</dt><dd id="dSenderLoc"></dd>
+                  <dt>Recipient</dt><dd id="dReceiver"></dd>
+                  <dt>Email</dt><dd id="dEmail"></dd>
+                  <dt>Phone</dt><dd id="dPhone"></dd>
+                </dl>
+                <dl class="detail-list">
+                  <dt>Goods</dt><dd id="dDescription"></dd>
+                  <dt>Category</dt><dd id="dCategory"></dd>
+                  <dt>Weight</dt><dd id="dWeight"></dd>
+                  <dt>Created</dt><dd id="dCreated"></dd>
+                </dl>
+              </div>
+            </section>
+
+            <section class="panel pad" aria-labelledby="historyTitle">
+              <h2 id="historyTitle">History</h2>
+              <ol class="history" id="history"></ol>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/vendor/leaflet/leaflet.js"></script>
+  <script src="/js/journey.js"></script>
+  <script src="/admin/assets/js/shipment.js"></script>
+</body>
+</html>

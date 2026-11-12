@@ -1,0 +1,34 @@
+# Render Blueprint - creates the ParcTrack Logistics web service.
+# Render dashboard: New > Blueprint > select this repository.
+services:
+  - type: web
+    name: parctrack-logistics          # becomes https://parctrack-logistics.onrender.com (or with a suffix if taken)
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      # --- you are asked for these when the Blueprint is created ---
+      - key: MONGODB_URI                # MongoDB Atlas connection string
+        sync: false
+      - key: ADMIN_EMAIL                # first administrator's email
+        sync: false
+      - key: ADMIN_PASSWORD             # first administrator's password (12+ characters)
+        sync: false
+      # --- generated automatically ---
+      - key: SESSION_SECRET
+        generateValue: true
+      # --- optional tuning ---
+      - key: MOVE_TICK_SECONDS
+        value: "30"
+      - key: GEOCODING
+        value: "on"
+      - key: ROUTING
+        value: "on"

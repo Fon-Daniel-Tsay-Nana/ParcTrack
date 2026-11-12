@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | ParcTrack Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/admin/assets/css/admin.css">
+</head>
+<body class="admin">
+  <div class="app" id="app">
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <a href="/admin/dashboard" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3.6c.3-1.5 1.4-2.3 2.6-2.1" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><circle cx="16.5" cy="7.5" r="4.3" fill="#fff"/><path d="M20.3 6.2 23.4 7.6 20.3 9z" fill="#FDB022"/><circle cx="17.7" cy="6.6" r="1" fill="#102A56"/><rect x="1.8" y="9.5" width="16" height="11" rx="1.6" fill="#155EEF" stroke="#fff" stroke-width="1.8"/><path d="M2.4 10.3 9.8 15.6 17.2 10.3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span>ParcTrack Admin</span>
+      </a>
+
+      <nav class="side-nav">
+        <div class="side-label">Menu</div>
+        <a href="/admin/dashboard" class="active" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+          Dashboard
+        </a>
+        <button type="button" data-open-create>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          New Shipment
+        </button>
+        <a href="/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+          View Website
+        </a>
+      </nav>
+
+      <div class="side-nav sidebar-foot">
+        <button type="button" id="logoutBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Log out
+        </button>
+      </div>
+    </aside>
+    <div class="nav-scrim" id="navScrim"></div>
+
+    <!-- ============ MAIN ============ -->
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-btn" id="menuBtn" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+          <h1>Dashboard</h1>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-sm" type="button" data-open-create>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span class="btn-label">New Shipment</span>
+          </button>
+          <div class="admin-chip">
+            <span class="avatar" id="avatar" aria-hidden="true">A</span>
+            <span class="who" id="adminEmail"></span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- Stats -->
+        <section class="stats" aria-label="Shipment statistics">
+          <div class="stat total">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div>
+            <div><strong id="sTotal">–</strong><span>Total Shipments</span></div>
+          </div>
+          <div class="stat transit">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7"/><circle cx="5.5" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></svg></div>
+            <div><strong id="sTransit">–</strong><span title="Dispatched, In Transit, Out for Delivery">In Transit</span></div>
+          </div>
+          <div class="stat delivered">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>
+            <div><strong id="sDelivered">–</strong><span>Delivered</span></div>
+          </div>
+          <div class="stat pending">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+            <div><strong id="sPending">–</strong><span title="Shipment Created, Processing">Pending</span></div>
+          </div>
+          <div class="stat hold">
+            <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 7v10M15 7v10"/></svg></div>
+            <div><strong id="sHold">–</strong><span>On Hold</span></div>
+          </div>
+        </section>
+
+        <!-- All shipments -->
+        <section class="panel" id="shipments" aria-labelledby="shipmentsTitle">
+          <div class="panel-head">
+            <h2 id="shipmentsTitle">All Shipments</h2>
+            <div class="filters">
+              <label class="search">
+                <span class="sr-only">Search shipments</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                <input class="input" id="searchInput" type="search" placeholder="Search code, recipient, destination…" autocomplete="off">
+              </label>
+              <label>
+                <span class="sr-only">Filter by status</span>
+                <select id="statusFilter"><option value="">All statuses</option></select>
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th scope="col">Tracking Code</th>
+                  <th scope="col">Recipient</th>
+                  <th scope="col">Destination</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Date</th>
+                  <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="shipmentRows">
+                <tr><td colspan="6" class="table-empty">Loading shipments…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-foot">
+            <span id="tableSummary"></span>
+            <div class="pager">
+              <button class="btn btn-outline btn-sm" id="prevPage" type="button" disabled>Previous</button>
+              <button class="btn btn-outline btn-sm" id="nextPage" type="button" disabled>Next</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ============ CREATE SHIPMENT MODAL ============ -->
+  <div class="modal" id="createModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="createTitle">
+      <div class="modal-head">
+        <h2 id="createTitle">Create New Shipment</h2>
+        <button class="modal-close" type="button" data-close-modal aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Step 1: form -->
+      <form id="createForm" novalidate>
+        <div class="modal-body">
+          <div class="alert alert-error" id="createError" role="alert"></div>
+
+          <fieldset>
+            <legend>Sender</legend>
+            <div class="form-grid">
+              <div class="field"><label for="f-sender-name">Name <span class="req">*</span></label>
+                <input class="input" id="f-sender-name" name="sender.name" maxlength="120" required><div class="err"></div></div>
+              <div class="field"><label for="f-sender-location">Location <span class="req">*</span></label>
+                <input class="input" id="f-sender-location" name="sender.location" maxlength="200" placeholder="e.g. Downtown, Tulsa" required><div class="err"></div></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Recipient</legend>
+            <div class="form-grid">
+              <div class="field span-2"><label for="f-receiver-name">Name <span class="req">*</span></label>
+                <input class="input" id="f-receiver-name" name="receiver.name" maxlength="120" required><div class="err"></div></div>
+              <div class="field"><label for="f-receiver-email">Email <span class="req">*</span></label>
+                <input class="input" id="f-receiver-email" name="receiver.email" type="email" maxlength="160" required><div class="err"></div></div>
+              <div class="field"><label for="f-receiver-phone">Phone <span class="req">*</span></label>
+                <input class="input" id="f-receiver-phone" name="receiver.phone" type="tel" maxlength="40" placeholder="+1 (555) 123-4567" required><div class="err"></div></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Parcel</legend>
+            <div class="form-grid">
+              <div class="field span-2"><label for="f-description">Goods Description <span class="req">*</span></label>
+                <textarea class="input" id="f-description" name="description" maxlength="500" rows="2" required></textarea><div class="err"></div></div>
+              <div class="field"><label for="f-category">Goods Category <span class="req">*</span></label>
+                <select id="f-category" name="category" required><option value="">Select a category</option></select><div class="err"></div></div>
+              <div class="field"><label for="f-weight">Weight (kg) <span class="req">*</span></label>
+                <input class="input" id="f-weight" name="weightKg" type="number" min="0.01" step="0.01" inputmode="decimal" required><div class="err"></div></div>
+              <div class="field"><label for="f-origin">Origin <span class="req">*</span></label>
+                <input class="input" id="f-origin" name="origin" maxlength="200" placeholder="e.g. Tulsa, Oklahoma" required><div class="err"></div></div>
+              <div class="field"><label for="f-destination">Destination <span class="req">*</span></label>
+                <input class="input" id="f-destination" name="destination" maxlength="200" placeholder="e.g. Dallas, Texas" required><div class="err"></div></div>
+              <div class="field"><label for="f-eta">Estimated Delivery (date &amp; time) <span class="req">*</span></label>
+                <input class="input" id="f-eta" name="estimatedDelivery" type="datetime-local" required><div class="err"></div></div>
+            </div>
+          </fieldset>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-outline" type="button" data-close-modal>Cancel</button>
+          <button class="btn" type="submit" id="createBtn">Create Shipment</button>
+        </div>
+      </form>
+
+      <!-- Step 2: generated code -->
+      <div id="createResult" hidden>
+        <div class="modal-body">
+          <div class="code-result">
+            <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>
+            <h3>Shipment created</h3>
+            <p class="muted">Share this tracking code with the sender and recipient.</p>
+            <div class="code-box">
+              <span class="mono" id="newCode"></span>
+              <button class="btn btn-sm" type="button" id="copyBtn">Copy</button>
+            </div>
+            <p class="code-warn">For security, only a hash of this code is stored. Copy it now, because it can't be displayed again.</p>
+            <p class="code-note muted" id="geoNote" hidden></p>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <a class="btn btn-outline" id="viewNewBtn" href="#">View shipment</a>
+          <button class="btn btn-outline" type="button" id="createAnother">Create another</button>
+          <button class="btn" type="button" data-close-modal>Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/admin/assets/js/dashboard.js"></script>
+</body>
+</html>

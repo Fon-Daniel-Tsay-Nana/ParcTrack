@@ -1,0 +1,26 @@
+/* Shared Leaflet map markers (customer tracking page + admin shipment page) */
+.bw-marker { width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 2px 6px rgba(0, 0, 0, .35); }
+.bw-marker.origin { background: var(--navy); }
+.bw-marker.dest { background: #067647; }
+.bw-marker.pending { background: var(--white); border-color: var(--blue); border-style: dashed; width: 22px; height: 22px; }
+
+.bw-parcel { position: relative; width: 34px; height: 34px; }
+.bw-parcel .core {
+  position: absolute; inset: 4px; border-radius: 50%; background: var(--blue); border: 3px solid var(--white);
+  box-shadow: 0 2px 8px rgba(21, 94, 239, .6); display: grid; place-items: center;
+}
+.bw-parcel .core svg { width: 14px; height: 14px; color: var(--white); }
+.bw-parcel .ring { position: absolute; inset: 0; border-radius: 50%; background: rgba(21, 94, 239, .3); animation: bw-ring 2s infinite; }
+.bw-parcel.paused .core { background: #F79009; box-shadow: 0 2px 8px rgba(247, 144, 9, .6); }
+.bw-parcel.paused .ring { display: none; }
+.bw-parcel.draggable { cursor: grab; }
+@keyframes bw-ring { 0% { transform: scale(.6); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+
+.leaflet-container { font-family: inherit; }
+
+/* Journey progress bar */
+.progress { height: 8px; border-radius: 999px; background: var(--light); border: 1px solid var(--border); overflow: hidden; margin: 6px 0 4px; }
+.progress span { display: block; height: 100%; width: 0; background: var(--blue); border-radius: 999px; transition: width 1s linear; }
+.progress.paused span { background: #F79009; }
+.progress.done span { background: #067647; }
+.progress-text { font-size: .85rem; color: var(--muted); font-weight: 500; }

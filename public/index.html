@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ParcTrack Logistics | Reliable Shipping &amp; Parcel Tracking</title>
+  <meta name="description" content="ParcTrack Logistics, Tulsa, Oklahoma. Dependable logistics solutions and transparent parcel tracking.">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header">
+    <div class="container">
+      <a href="#home" class="brand" aria-label="ParcTrack Logistics home">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3.6c.3-1.5 1.4-2.3 2.6-2.1" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><circle cx="16.5" cy="7.5" r="4.3" fill="#fff"/><path d="M20.3 6.2 23.4 7.6 20.3 9z" fill="#FDB022"/><circle cx="17.7" cy="6.6" r="1" fill="#102A56"/><rect x="1.8" y="9.5" width="16" height="11" rx="1.6" fill="#155EEF" stroke="#fff" stroke-width="1.8"/><path d="M2.4 10.3 9.8 15.6 17.2 10.3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span>Parc<b>Track</b> Logistics</span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+
+      <nav class="nav" id="mainNav">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+        <a href="#track" class="btn">Track Shipment</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">ParcTrack Logistics</span>
+          <h1>Your Trusted Partner for <span>Reliable Shipping.</span></h1>
+          <p>Ship with confidence. We provide dependable logistics solutions and transparent parcel tracking.</p>
+          <div class="hero-actions">
+            <a href="#track" class="btn">Track Shipment</a>
+            <a href="#services" class="btn btn-outline">Our Services</a>
+          </div>
+          <div class="hero-stats">
+            <div><strong>24/7</strong><span>Shipment tracking</span></div>
+            <div><strong>4</strong><span>Core services</span></div>
+            <div><strong>Tulsa</strong><span>Oklahoma HQ</span></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img class="hero-image" src="/images/hero-shipping.svg" width="560" height="440"
+               alt="Cargo ship carrying containers across the ocean, with a plane and delivery route above">
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TRACKING ============ -->
+    <section class="tracking" id="track">
+      <div class="container">
+        <div class="tracking-card">
+          <div>
+            <h2>Track Your Shipment</h2>
+            <p>Enter the tracking code from your receipt to see where your parcel is right now.</p>
+          </div>
+          <div>
+            <form class="track-form" id="trackForm" novalidate>
+              <label for="trackingCode" class="sr-only">Tracking code</label>
+              <input class="input" id="trackingCode" name="trackingCode" type="text"
+                     placeholder="Enter your 16-character tracking code"
+                     maxlength="16" autocomplete="off" spellcheck="false" autocapitalize="characters"
+                     aria-describedby="trackError trackHint">
+              <button class="btn" type="submit" id="trackBtn">Track Now</button>
+            </form>
+            <div class="form-error" id="trackError" role="alert" aria-live="polite"></div>
+            <p class="form-hint" id="trackHint">Tracking codes use digits 0–9 and letters A–F, e.g. 3F9A1C0B7E2D4A6F.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="section" id="about">
+      <div class="container about-grid">
+        <div>
+          <span class="eyebrow">About Us</span>
+          <h2 class="section-title">Connecting Destinations, Delivering Confidence.</h2>
+          <p class="muted">ParcTrack Logistics is a logistics and parcel delivery company based in Tulsa, Oklahoma. We help individuals and businesses move goods safely, whether across town or across borders, and we keep every customer informed from pickup to delivery.</p>
+          <ul class="about-list">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>
+              <span>Careful handling of every parcel, large or small.</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>
+              <span>Live shipment tracking with clear status updates.</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>
+              <span>A friendly support team ready to help.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="about-panel">
+          <div><strong>Local</strong><span>Headquartered in Tulsa, Oklahoma</span></div>
+          <div><strong>Global</strong><span>International shipping options</span></div>
+          <div><strong>Live</strong><span>Real-time tracking on a map</span></div>
+          <div><strong>Secure</strong><span>Safe handling from pickup to delivery</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SERVICES ============ -->
+    <section class="section section-alt" id="services">
+      <div class="container">
+        <div class="section-head-center">
+          <span class="eyebrow">Services</span>
+          <h2 class="section-title">Logistics Solutions for Every Need</h2>
+          <p class="section-lead">From a single envelope to a full cargo load, we have a service that fits.</p>
+        </div>
+        <div class="grid">
+          <article class="card service-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+            </div>
+            <h3>International Shipping</h3>
+            <p class="muted">Send parcels and goods abroad with customs-ready documentation and end-to-end tracking.</p>
+          </article>
+          <article class="card service-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>
+            </div>
+            <h3>Parcel Delivery</h3>
+            <p class="muted">Reliable door-to-door delivery of parcels and documents for individuals and businesses.</p>
+          </article>
+          <article class="card service-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7"/><circle cx="5.5" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></svg>
+            </div>
+            <h3>Cargo Transportation</h3>
+            <p class="muted">Safe road transport of bulk and heavy goods between cities and regions.</p>
+          </article>
+          <article class="card service-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+            </div>
+            <h3>Express Delivery</h3>
+            <p class="muted">Priority handling for urgent shipments that need to arrive as fast as possible.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHY CHOOSE US ============ -->
+    <section class="section why" id="why">
+      <div class="container">
+        <div class="section-head-center">
+          <span class="eyebrow" style="color:#8FB3FF">Why Choose Us</span>
+          <h2 class="section-title">Shipping You Can Count On</h2>
+          <p class="section-lead">We focus on what matters most: getting your shipment there and keeping you informed.</p>
+        </div>
+        <div class="grid">
+          <div class="why-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3>Reliability</h3>
+            <p>Planned routes, careful handling and on-time delivery you can depend on.</p>
+          </div>
+          <div class="why-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <h3>Transparency</h3>
+            <p>Track every shipment live, with a clear status history at each step.</p>
+          </div>
+          <div class="why-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg>
+            </div>
+            <h3>Customer Support</h3>
+            <p>A responsive team ready to answer your questions by phone or email.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="section-head-center">
+          <span class="eyebrow">Contact</span>
+          <h2 class="section-title">Get in Touch</h2>
+          <p class="section-lead">Questions about a shipment or our services? We are happy to help.</p>
+        </div>
+        <div class="grid">
+          <div class="card contact-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <h3>Location</h3>
+            <p class="muted">Tulsa, Oklahoma</p>
+          </div>
+          <div class="card contact-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+            </div>
+            <h3>Email</h3>
+            <p><a href="mailto:wiiliamsmithson097@icloud.com">wiiliamsmithson097@icloud.com</a></p>
+          </div>
+          <div class="card contact-card">
+            <div class="icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
+            </div>
+            <h3>Phone</h3>
+            <p><a href="tel:+16578993334">+1 (657) 899-3334</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a href="#home" class="brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3.6c.3-1.5 1.4-2.3 2.6-2.1" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><circle cx="16.5" cy="7.5" r="4.3" fill="#fff"/><path d="M20.3 6.2 23.4 7.6 20.3 9z" fill="#FDB022"/><circle cx="17.7" cy="6.6" r="1" fill="#102A56"/><rect x="1.8" y="9.5" width="16" height="11" rx="1.6" fill="#155EEF" stroke="#fff" stroke-width="1.8"/><path d="M2.4 10.3 9.8 15.6 17.2 10.3" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span>ParcTrack Logistics</span>
+        </a>
+        <p>Connecting Destinations, Delivering Confidence.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#track">Track Shipment</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li>Tulsa, Oklahoma</li>
+          <li><a href="mailto:wiiliamsmithson097@icloud.com">wiiliamsmithson097@icloud.com</a></li>
+          <li><a href="tel:+16578993334">+1 (657) 899-3334</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>&copy; <span id="year"></span> ParcTrack Logistics. All rights reserved.</span>
+      <span>Tulsa, Oklahoma</span>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
