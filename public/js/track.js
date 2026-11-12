@@ -392,6 +392,11 @@
     });
     socket.on('disconnect', () => { connected = false; updateLiveIndicator(); });
 
+    socket.on('shipment:deleted', () => {
+      shipment = null;
+      showError('Shipment no longer available', 'This shipment has been removed. If you think this is a mistake, please contact us.');
+    });
+
     // Only updates for this shipment's room arrive here
     socket.on('shipment:update', (data) => {
       if (!data || !data.status) return;

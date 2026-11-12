@@ -338,6 +338,18 @@
     });
   });
 
+  $('deleteBtn').addEventListener('click', async () => {
+    if (!confirm(`Delete shipment ${shipment.codeHint}${shipment.receiver.name ? ` for ${shipment.receiver.name}` : ''}?\n\nThis permanently removes it. Its tracking code will stop working. This cannot be undone.`)) return;
+    await withBusy($('deleteBtn'), 'Deleting…', async () => {
+      try {
+        await api('/api/admin/shipments/' + encodeURIComponent(shipmentId), { method: 'DELETE', body: '{}' });
+        window.location.replace('/admin/dashboard');
+      } catch (err) {
+        if (err.message !== 'unauthorized') toast(err.message || 'Could not delete the shipment.', true);
+      }
+    });
+  });
+
   $('copyBtn').addEventListener('click', async () => {
     const code = $('newCode').textContent;
     let ok = false;

@@ -183,11 +183,30 @@
                 <select id="f-category" name="category" required><option value="">Select a category</option></select><div class="err"></div></div>
               <div class="field"><label for="f-weight">Weight (kg) <span class="req">*</span></label>
                 <input class="input" id="f-weight" name="weightKg" type="number" min="0.01" step="0.01" inputmode="decimal" required><div class="err"></div></div>
-              <div class="field"><label for="f-origin">Origin <span class="req">*</span></label>
-                <input class="input" id="f-origin" name="origin" maxlength="200" placeholder="e.g. Tulsa, Oklahoma" required><div class="err"></div></div>
-              <div class="field"><label for="f-destination">Destination <span class="req">*</span></label>
-                <input class="input" id="f-destination" name="destination" maxlength="200" placeholder="e.g. Dallas, Texas" required><div class="err"></div></div>
-              <div class="field"><label for="f-eta">Estimated Delivery (date &amp; time) <span class="req">*</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Route &amp; delivery</legend>
+            <p class="fieldset-hint">Start typing a city or address and pick a suggestion. That places it exactly on the map.</p>
+            <div class="form-grid">
+              <div class="field place-field span-2"><label for="f-origin">Origin <span class="req">*</span></label>
+                <div class="place-wrap">
+                  <input class="input" id="f-origin" name="origin" maxlength="200" placeholder="e.g. Tulsa, Oklahoma" autocomplete="off" required
+                         role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="f-origin-list">
+                  <span class="place-status" aria-hidden="true"></span>
+                  <ul class="suggest" id="f-origin-list" role="listbox" hidden></ul>
+                </div>
+                <div class="place-note" aria-live="polite"></div><div class="err"></div></div>
+              <div class="field place-field span-2"><label for="f-destination">Destination <span class="req">*</span></label>
+                <div class="place-wrap">
+                  <input class="input" id="f-destination" name="destination" maxlength="200" placeholder="e.g. Dallas, Texas" autocomplete="off" required
+                         role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="f-destination-list">
+                  <span class="place-status" aria-hidden="true"></span>
+                  <ul class="suggest" id="f-destination-list" role="listbox" hidden></ul>
+                </div>
+                <div class="place-note" aria-live="polite"></div><div class="err"></div></div>
+              <div class="field span-2"><label for="f-eta">Estimated Delivery (date &amp; time) <span class="req">*</span></label>
                 <input class="input" id="f-eta" name="estimatedDelivery" type="datetime-local" required><div class="err"></div></div>
             </div>
           </fieldset>
@@ -221,6 +240,8 @@
       </div>
     </div>
   </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="/admin/assets/js/dashboard.js"></script>
 </body>

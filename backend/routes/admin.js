@@ -8,7 +8,7 @@ const Shipment = require('../models/Shipment');
 const { STATUSES, STATUS_GROUPS, GOODS_CATEGORIES } = Shipment;
 const { issueSession, clearSession, requireAdminApi } = require('../middleware/auth');
 const { generateTrackingCode, hashTrackingCode, normalizeTrackingCode, isValidTrackingCode } = require('../utils/trackingCode');
-const { geocode, reverseGeocode } = require('../utils/geocode');
+const { geocode, searchPlaces, reverseGeocode } = require('../utils/geocode');
 const { emitShipmentUpdate } = require('../realtime');
 const { startJourney, pauseJourney, resumeJourney, retimeJourney, resetJourney, advance } = require('../utils/journey');
 
@@ -190,11 +190,26 @@ router.post('/shipments', async (req, res) => {
     return res.status(400).json({ ok: false, error: 'Please correct the highlighted fields.', fields: errors });
   }
 
-  const [originCoords, destCoords] = [await geocode(data.origin), await geocode(data.destination)];
-  // keep the admin's wording for the name; only take coordinates from the lookup
-  const coords = (c) => (c ? { lat: c.lat, lng: c.lng } : {});
-  const origin = { name: data.origin, ...coords(originCoords) };
-  const destination = { name: data.destination, ...coords(destCoords) };
+  // Map points: use the suggestion the admin picked (exact), otherwise look the typed name up
+  const pointOf = (p) => {
+    const lat = Number(p && p.lat);
+    const lng = Number(p && p.lng);
+    return Number.isFinite(lat) && Math.abs(lat) <= 90 && Number.isFinite(lng) && Math.abs(lng) <= 180 ? { lat, lng } : null;
+  };
+  const resolve = async (name, picked) => pointOf(picked) || pointOf(await geocode(name));
+  const [originCoords, destCoords] = await Promise.all([resolve(data.origin, req.body.originPoint), resolve(data.destination, req.body.destinationPoint)]);
+
+  // Never create a shipment that can't be shown on the map
+  const placeErrors = {};
+  if (!originCoords) placeErrors.origin = "We couldn't find this place on the map. Pick one of the suggestions, or try a more specific name (e.g. \"Tulsa, Oklahoma\").";
+  if (!destCoords) placeErrors.destination = "We couldn't find this place on the map. Pick one of the suggestions, or try a more specific name (e.g. \"Dallas, Texas\").";
+  if (Object.keys(placeErrors).length) {
+    return res.status(400).json({ ok: false, error: 'Some places could not be found on the map.', fields: placeErrors });
+  }
+
+  // keep the admin's wording for the name; coordinates come from the picked/looked-up point
+  const origin = { name: data.origin, ...originCoords };
+  const destination = { name: data.destination, ...destCoords };
   const now = new Date();
 
   // Retry in the (astronomically unlikely) event of a hash collision
@@ -218,25 +233,23 @@ router.post('/shipments', async (req, res) => {
         history: [{ status: 'Shipment Created', location: origin, note: `Created by ${req.admin.email}`, timestamp: now }],
       });
       // Start moving straight away (route lookup runs in the background so the admin isn't kept waiting)
-      const canMove = !!(originCoords && destCoords);
-      if (canMove) {
-        const io = req.app.get('io');
-        setImmediate(async () => {
-          try {
-            const s = await Shipment.findById(shipment._id);
-            const r = await startJourney(s, Date.now(), 'system');
-            if (r.ok) { await s.save(); emitShipmentUpdate(io, s); }
-          } catch (err) {
-            console.error('[admin] could not start journey:', err.message);
-          }
-        });
-      }
+      const io = req.app.get('io');
+      setImmediate(async () => {
+        try {
+          const s = await Shipment.findById(shipment._id);
+          if (!s) return;
+          const r = await startJourney(s, Date.now(), 'system');
+          if (r.ok) { await s.save(); emitShipmentUpdate(io, s); }
+        } catch (err) {
+          console.error('[admin] could not start journey:', err.message);
+        }
+      });
       return res.status(201).json({
         ok: true,
         trackingCode, // shown to the admin once - only the hash is stored
         shipment: shipment.toAdminRow(),
-        geocoded: { origin: !!originCoords, destination: !!destCoords },
-        moving: canMove,
+        geocoded: { origin: true, destination: true },
+        moving: true,
       });
     } catch (err) {
       if (err && err.code === 11000) continue;
@@ -428,12 +441,29 @@ router.post('/shipments/:id/reissue-code', async (req, res) => {
 });
 
 // ---------------- Place lookups for the map ----------------
+// GET /api/admin/geocode/search?q=...&limit=5 -> { places: [{ name, lat, lng }], place: first }
 router.get('/geocode/search', async (req, res) => {
   const q = str(req.query.q, 200);
-  if (!q) return res.status(400).json({ ok: false, error: 'Type a place name.' });
-  const hit = await geocode(q);
-  if (!hit) return res.status(404).json({ ok: false, error: 'Place not found. Try a more specific name, or click on the map.' });
-  res.json({ ok: true, place: hit });
+  if (q.length < 2) return res.status(400).json({ ok: false, error: 'Type at least 2 characters.' });
+  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 1, 1), 8);
+  const places = await searchPlaces(q, limit);
+  if (!places.length) return res.status(404).json({ ok: false, error: 'Place not found. Try a more specific name, or click on the map.', places: [] });
+  res.json({ ok: true, places, place: places[0] });
+});
+
+// Permanently delete a shipment. Customers watching it are told it's no longer available.
+router.delete('/shipments/:id', async (req, res) => {
+  try {
+    const shipment = await findShipment(req, res);
+    if (!shipment) return;
+    await Shipment.deleteOne({ _id: shipment._id });
+    req.app.get('io').to(`track:${shipment.trackingCodeHash}`).emit('shipment:deleted');
+    console.log(`[admin] shipment ${shipment.codeHint || shipment.trackingCodeLast4} deleted by ${req.admin.email}`);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[admin] delete failed:', err.message);
+    res.status(500).json({ ok: false, error: 'Could not delete the shipment. Please try again.' });
+  }
 });
 
 router.get('/geocode/reverse', async (req, res) => {

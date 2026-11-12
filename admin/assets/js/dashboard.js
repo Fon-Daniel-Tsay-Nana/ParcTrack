@@ -107,11 +107,20 @@
         badge.textContent = s.status;
         tr.appendChild(td('Status', badge));
         tr.appendChild(td('Date', fmtDate(s.createdAt)));
+        const actions = document.createElement('div');
+        actions.className = 'row-actions';
         const view = document.createElement('a');
         view.className = 'btn btn-outline btn-sm';
         view.href = '/admin/shipments/' + encodeURIComponent(s.id);
         view.textContent = 'View';
-        tr.appendChild(td('', view, 'actions'));
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'btn btn-danger-outline btn-sm';
+        del.textContent = 'Delete';
+        del.setAttribute('aria-label', `Delete shipment ${s.codeHint} for ${s.recipient || 'recipient'}`);
+        del.addEventListener('click', () => deleteShipment(s, del));
+        actions.append(view, del);
+        tr.appendChild(td('', actions, 'actions'));
         tbody.appendChild(tr);
       });
 
@@ -125,6 +134,35 @@
       tbody.innerHTML = '<tr><td colspan="6" class="table-empty"></td></tr>';
       tbody.querySelector('td').textContent = e.message || 'Could not load shipments.';
     }
+  }
+
+  // ---------- Delete ----------
+  async function deleteShipment(s, btn) {
+    const ok = confirm(`Delete shipment ${s.codeHint}${s.recipient ? ` for ${s.recipient}` : ''}?\n\nThis permanently removes it. Its tracking code will stop working. This cannot be undone.`);
+    if (!ok) return;
+    btn.disabled = true;
+    btn.textContent = 'Deleting…';
+    try {
+      await api('/api/admin/shipments/' + encodeURIComponent(s.id), { method: 'DELETE', body: '{}' });
+      toast(`Shipment ${s.codeHint} deleted.`);
+      loadStats();
+      loadShipments();
+    } catch (e) {
+      if (e.message === 'unauthorized') return;
+      toast(e.message || 'Could not delete the shipment.', true);
+      btn.disabled = false;
+      btn.textContent = 'Delete';
+    }
+  }
+
+  let toastTimer;
+  function toast(msg, isError) {
+    const el = $('toast');
+    el.textContent = msg;
+    el.classList.toggle('error', !!isError);
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
   }
 
   let searchTimer;
@@ -171,8 +209,116 @@
     return d.toISOString().slice(0, 16);
   }
 
+  // ---------- Place suggestions (origin / destination) ----------
+  // Typing shows suggestions; picking one stores its exact map point, which is sent with the form.
+  // If the admin doesn't pick one, the best match is looked up when they leave the field or submit.
+  function setupPlaceField(input) {
+    const field = input.closest('.place-field');
+    const list = field.querySelector('.suggest');
+    const status = field.querySelector('.place-status');
+    const note = field.querySelector('.place-note');
+    const st = { point: null, items: [], active: -1, seq: 0, timer: null };
+
+    function setPoint(p) {
+      st.point = p ? { lat: p.lat, lng: p.lng } : null;
+      field.classList.toggle('located', !!p);
+      status.textContent = p ? '✓' : '';
+      note.textContent = p ? `On the map: ${p.name}` : '';
+    }
+    function close() {
+      list.hidden = true;
+      st.active = -1;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+    }
+    function highlight(i) {
+      st.active = i;
+      [...list.children].forEach((li, j) => li.classList.toggle('active', j === i));
+      if (i >= 0) {
+        input.setAttribute('aria-activedescendant', list.children[i].id);
+        list.children[i].scrollIntoView({ block: 'nearest' });
+      }
+    }
+    function render(items) {
+      st.items = items;
+      list.textContent = '';
+      items.forEach((p, i) => {
+        const li = document.createElement('li');
+        li.id = `${list.id}-${i}`;
+        li.setAttribute('role', 'option');
+        const pin = document.createElement('span');
+        pin.className = 'pin';
+        pin.setAttribute('aria-hidden', 'true');
+        li.append(pin, document.createTextNode(p.name));
+        li.addEventListener('mousedown', (ev) => { ev.preventDefault(); choose(i); });
+        list.appendChild(li);
+      });
+      list.hidden = !items.length;
+      input.setAttribute('aria-expanded', String(!!items.length));
+    }
+    function choose(i) {
+      const p = st.items[i];
+      if (!p) return;
+      input.value = p.name;
+      setPoint(p);
+      close();
+      field.classList.remove('invalid');
+    }
+    async function lookup(limit) {
+      const q = input.value.trim();
+      if (q.length < 2) return [];
+      const seq = ++st.seq;
+      field.classList.add('loading');
+      try {
+        const d = await api(`/api/admin/geocode/search?limit=${limit}&q=${encodeURIComponent(q)}`);
+        return seq === st.seq ? d.places || [] : null;
+      } catch (_) {
+        return seq === st.seq ? [] : null;
+      } finally {
+        if (seq === st.seq) field.classList.remove('loading');
+      }
+    }
+
+    input.addEventListener('input', () => {
+      setPoint(null);
+      clearTimeout(st.timer);
+      if (input.value.trim().length < 2) { close(); return; }
+      st.timer = setTimeout(async () => {
+        const items = await lookup(5);
+        if (!items) return; // a newer search is running
+        render(items);
+        if (!items.length) note.textContent = 'No matches yet. Try adding the state or country, e.g. "Tulsa, Oklahoma".';
+      }, 350);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (list.hidden) return;
+      const n = st.items.length;
+      if (e.key === 'ArrowDown') { e.preventDefault(); highlight((st.active + 1) % n); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); highlight((st.active - 1 + n) % n); }
+      else if (e.key === 'Enter' && st.active >= 0) { e.preventDefault(); choose(st.active); }
+      else if (e.key === 'Escape') { e.stopPropagation(); close(); }
+    });
+    input.addEventListener('blur', () => {
+      setTimeout(close, 150);
+      if (!st.point && input.value.trim().length >= 2) ensure(); // resolve typed text in the background
+    });
+
+    async function ensure() {
+      if (st.point) return true;
+      clearTimeout(st.timer);
+      const items = await lookup(1);
+      if (items && items[0]) { setPoint(items[0]); return true; }
+      return !!st.point;
+    }
+    function reset() { clearTimeout(st.timer); st.seq++; setPoint(null); close(); field.classList.remove('loading'); }
+    return { st, ensure, reset };
+  }
+  const places = { origin: setupPlaceField($('f-origin')), destination: setupPlaceField($('f-destination')) };
+
   function resetForm() {
     form.reset();
+    places.origin.reset();
+    places.destination.reset();
     form.querySelectorAll('.field').forEach((f) => f.classList.remove('invalid'));
     $('createError').classList.remove('show');
     $('f-eta').min = localInputValue(10);
@@ -262,19 +408,34 @@
       return;
     }
 
+    const btn = $('createBtn');
+    btn.disabled = true;
+    btn.textContent = 'Finding places…';
+
+    // Both places must be on the map before the shipment is created
+    const [originOk, destOk] = await Promise.all([places.origin.ensure(), places.destination.ensure()]);
+    if (!originOk || !destOk) {
+      if (!originOk) setFieldError('origin', "We couldn't find this place on the map. Pick a suggestion, or add the state/country.");
+      if (!destOk) setFieldError('destination', "We couldn't find this place on the map. Pick a suggestion, or add the state/country.");
+      (originOk ? $('f-destination') : $('f-origin')).focus();
+      btn.disabled = false;
+      btn.textContent = 'Create Shipment';
+      return;
+    }
+
     const payload = {
       sender: { name: v['sender.name'], location: v['sender.location'] },
       receiver: { name: v['receiver.name'], email: v['receiver.email'], phone: v['receiver.phone'] },
       description: v.description,
       category: v.category,
       weightKg: Number(v.weightKg),
-      origin: v.origin,
-      destination: v.destination,
+      origin: $('f-origin').value.trim(),
+      destination: $('f-destination').value.trim(),
+      originPoint: places.origin.st.point,
+      destinationPoint: places.destination.st.point,
       estimatedDelivery: new Date(v.estimatedDelivery).toISOString(), // local date & time -> UTC
     };
 
-    const btn = $('createBtn');
-    btn.disabled = true;
     btn.textContent = 'Creating…';
     try {
       const data = await api('/api/admin/shipments', { method: 'POST', body: JSON.stringify(payload) });
@@ -282,14 +443,8 @@
       $('viewNewBtn').href = '/admin/shipments/' + encodeURIComponent(data.shipment.id);
       $('copyBtn').textContent = 'Copy';
 
-      const missing = [];
-      if (!data.geocoded.origin) missing.push('origin');
-      if (!data.geocoded.destination) missing.push('destination');
-      $('geoNote').hidden = !missing.length;
       $('geoNote').hidden = false;
-      $('geoNote').textContent = missing.length
-        ? `Map coordinates could not be found for the ${missing.join(' and ')}. Set them on the shipment page, then press "Start journey".`
-        : 'The parcel is on its way. It moves along the road and arrives at the estimated delivery time.';
+      $('geoNote').textContent = 'The parcel is on its way. It moves along the road and arrives at the estimated delivery time.';
 
       form.hidden = true;
       $('createResult').hidden = false;
